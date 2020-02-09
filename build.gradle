@@ -13,10 +13,26 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	components {
+		withModule('org.springframework:spring-beans') {
+			allVariants {
+				withDependencyConstraints {
+					// Need to patch constraints because snakeyaml is an optional dependency
+					it.findAll { it.name == 'snakeyaml' }.each { it.version { strictly '1.19' } }
+				}
+			}
+		}
+	}
+}
+
+bootJar {
+	mainClassName = 'com.example.step1.demo.DemoApplication'
 }
 
 test {
